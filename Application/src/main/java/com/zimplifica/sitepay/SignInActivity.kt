@@ -9,7 +9,9 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
+import com.zimplifica.sitepay.viewModels.SignUpViewModel
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 
@@ -23,7 +25,7 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
-        this.supportActionBar?.title = "Registrarse"
+        this.supportActionBar?.title = "Iniciar Sesión"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         userNameInput = findViewById(R.id.user_name_main2)
@@ -31,6 +33,8 @@ class SignInActivity : AppCompatActivity() {
         passwordInput = findViewById(R.id.password_main2)
         passwordLayout = findViewById(R.id.textInputLayout2)
         val toogle = passwordLayout.isPasswordVisibilityToggleEnabled
+
+        val MVM = SignUpViewModel.ViewModel()
 
 
         val userObs : Observable<Boolean> =
@@ -60,6 +64,11 @@ class SignInActivity : AppCompatActivity() {
             }
             .subscribe {
                 color -> nextBtn.backgroundTintList = ContextCompat.getColorStateList(this,color)
+            }
+
+        val btnSubs = RxView.clicks(nextBtn)
+            .subscribe {
+
             }
     }
 
