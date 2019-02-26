@@ -1,4 +1,7 @@
 package com.zimplifica.domain.entities
 
-class GenericResponse(val result : Result, val status : Boolean, val error : Error?){
+import java.lang.Exception
+
+class GenericResponse<R, E : Exception>(val result : R?, val status : Boolean, val error : E?){
+
 }

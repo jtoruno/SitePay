@@ -68,7 +68,7 @@ class SignInActivity : AppCompatActivity() {
 
         val btnSubs = RxView.clicks(nextBtn)
             .subscribe {
-
+                Log.e("SignInBtn", "Clicked")
             }
     }
 
