@@ -13,9 +13,13 @@ import android.widget.Button
 import android.widget.EditText
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
+import com.zimplifica.sitepay.Scenes.SignIn.SignInViewModel
+import com.zimplifica.sitepay.extensions.onChange
 import com.zimplifica.sitepay.viewModels.SignUpViewModel
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 
 class SignInActivity : AppCompatActivity() {
 
@@ -36,24 +40,19 @@ class SignInActivity : AppCompatActivity() {
         passwordLayout = findViewById(R.id.textInputLayout2)
         val toogle = passwordLayout.isPasswordVisibilityToggleEnabled
 
-        val MVM = SignUpViewModel.ViewModel()
+        val usecase = Application.getInstance(this).awsProvider.makeAuthenticationUseCase()
+        val MVM = SignInViewModel.ViewModel(usecase)
+
+
+        userNameInput.onChange { MVM.inputs.username(it) }
+        passwordInput.onChange { MVM.inputs.password(it) }
+        MVM.outputs.signInButtonIsEnabled()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({setLoginButtonEnabled(it)})
+
+
 
         /*
-        userNameInput.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-        })*/
-
         val userObs : Observable<Boolean> =
                 RxTextView.textChanges(userNameInput)
                     .map {
@@ -87,6 +86,11 @@ class SignInActivity : AppCompatActivity() {
             .subscribe {
                 Log.e("SignInBtn", "Clicked")
             }
+        */
+    }
+
+    private fun setLoginButtonEnabled(enabled : Boolean){
+        nextBtn.isEnabled = enabled
     }
 
     override fun onSupportNavigateUp(): Boolean {
