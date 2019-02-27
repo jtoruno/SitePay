@@ -1,9 +1,9 @@
 package com.zimplifica.sitepay.libs.rx.transformers;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.annotations.NonNull;
+        import io.reactivex.ObservableSource;
+        import io.reactivex.ObservableTransformer;
+        import io.reactivex.annotations.NonNull;
 
 public final class TakeWhenTransformer<S, T> implements ObservableTransformer<S, S> {
     @NonNull

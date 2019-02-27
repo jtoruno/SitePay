@@ -40,6 +40,8 @@ interface SignInViewModel {
         private val signInButtonPressed   = PublishSubject.create<Unit>()
 
         private val signInButtonIsEnabled = BehaviorSubject.create<Boolean>()
+        private  val signInStatusSignal = BehaviorSubject.create<GenericResponse<SignInResult, SignInError>>()
+        private val signInErrorMessage = BehaviorSubject.create<String>()
 
 
         override fun onCreate() {
@@ -72,28 +74,53 @@ interface SignInViewModel {
             isValid
                 .subscribe(this.signInButtonIsEnabled)
 
-
-
-            usernameAndPassword.subscribe{print("FormData: ${it.first} ${it.second}")}
-
-            //val aux = takeWhen<Pair<String,String>,Unit>(signInButtonPressed) as ObservableSource<Unit>
-            val signInStatusSignal = usernameAndPassword
-                .compose{ takeWhen<Pair<String,String>,Unit>(signInButtonPressed).apply(it)}
+             val signInSignal = usernameAndPassword
+                .compose(takeWhen<Pair<String,String>,Unit>(signInButtonPressed))
                 .switchMap { this.authenticationUseCase?.signIn(it.first, it.second) }
-                .subscribe{
-                    print("SignInStatus: ${it.status}")
+
+            signInSignal
+                .subscribe(this.signInStatusSignal)
+
+            val signInErrorMessageSignal =
+                signInSignal.map {
+                    result->
+                    val error = result.error
+                    error?.let {
+                        when(it){
+                            SignInError.invalidCredentials -> {
+                                return@map "InvalidCredentials"
+                            }
+                            SignInError.userNotConfirmed -> {
+                                return@map "UserNotConfirmed"
+                            }
+
+                            SignInError.tooManyFailedAttemps -> {
+                                return@map "TooManyFailedAttempts"
+                            }
+                            SignInError.internalError(message = it.message?:"") ->{
+                                return@map "InternalError"
+                            }
+                            SignInError.unknown ->{
+                                return@map "UnknownError"
+                            }
+                            else ->{
+                                return@map ""
+                            }
+                        }
+                    } ?: run {
+                        return@map ""
+                    }
                 }
+            signInErrorMessageSignal
+                .subscribe(this.signInErrorMessage)
+
 
 
         }
 
-        override fun errorMessage(): Observable<String> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+        override fun errorMessage(): Observable<String> = this.signInErrorMessage
 
-        override fun signInStatus(): Observable<GenericResponse<SignInResult, SignInError>> {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+        override fun signInStatus(): Observable<GenericResponse<SignInResult, SignInError>>  = this.signInStatusSignal
 
         override fun signInButtonIsEnabled(): Observable<Boolean> = this.signInButtonIsEnabled
 

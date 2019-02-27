@@ -16,7 +16,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 observer.onComplete()
             }
             else{
-                val response = GenericResponse<SignInResult, SignInError>(null,false, SignInError.unknown)
+                val response = GenericResponse<SignInResult, SignInError>(null,false, SignInError.userNotConfirmed)
                 observer.onNext(response)
                 observer.onComplete()
             }
