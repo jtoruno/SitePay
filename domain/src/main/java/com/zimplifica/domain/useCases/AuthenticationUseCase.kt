@@ -7,4 +7,5 @@ import io.reactivex.Observable
 
 interface AuthenticationUseCase {
     fun signIn(username : String, password : String) : Observable<GenericResponse<SignInResult, SignInError>>
+    fun signUp(username : String, password: String) : Observable<GenericResponse<SignInResult, SignInError>>
 }

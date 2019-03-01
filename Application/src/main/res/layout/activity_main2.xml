@@ -44,10 +44,11 @@
     </android.support.design.widget.TextInputLayout>
     <Button
             android:text="Sign In"
+            android:enabled="false"
             android:textAllCaps="false"
             android:textSize="18sp"
+            android:background="@drawable/custom_btn"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/button" android:layout_marginTop="15dp"
